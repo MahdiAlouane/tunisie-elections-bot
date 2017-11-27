@@ -1,0 +1,60 @@
+// This is a static file
+// served from your routes in server.js
+// You might want to try something fancier:
+// html/nunjucks docs: http://mozilla.github.io/nunjucks/
+// jade: http://jade-lang.com/
+// haml: http://haml.info/tutorial.html
+// hbs(handlebars): http://handlebarsjs.com/expressions.html
+html
+  head
+    title Simple Map
+    meta(name='viewport', content='initial-scale=1.0')
+    meta(charset='utf-8')
+    style.
+      /* Always set the map height explicitly to define the size of the div
+      * element that contains the map. */
+      #map {
+      height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      }
+    body
+    script.
+      (function(d, s, id){
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) {return;}
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.com/en_US/messenger.Extensions.js";
+      fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'Messenger'));
+    #map
+    script(type='text/javascript', src='https://code.jquery.com/jquery-latest.min.js')
+    script.
+      var map;
+      function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+      //console.log('bonjour')
+      //console.log(<%=longitude%>)
+      center: {lat: #{locals.latitude}, lng: #{locals.longitude} },
+      zoom: 14
+      });
+      }
+    script(type='text/javascript').
+      $(document).ready(function() {
+      $.getJSON("/foo.txt", function(json1) {
+      $.each(json1, function(key, data) {
+      var latLng = new google.maps.LatLng(parseFloat(data.latlon.split(',')[0]), parseFloat(data.latlon.split(',')[1]));
+      // Creating a marker and putting it on the map
+      var marker = new google.maps.Marker({
+      position: latLng,
+      title: data.title
+      });
+      marker.setMap(map);
+      });
+      });
+      });
+    script(src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCvzrgWR7P75cFBCLZokHgqy1zuyIOrhiE&callback=initMap', async='', defer='')
